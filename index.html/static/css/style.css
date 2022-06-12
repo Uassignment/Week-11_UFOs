@@ -1,0 +1,9 @@
+body {
+
+    color: rgb(0, 2, 7);
+  }
+  .jumbotron {
+    background-image: url("../images/Ufo sightings.jpg");
+    background-size: 100% 100%;
+    text-align: center;
+  }
