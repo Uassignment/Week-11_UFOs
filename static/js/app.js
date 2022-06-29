@@ -1,50 +1,57 @@
-// from data.js
+// import the data from data.js
 const tableData = data;
-
-$(document).ready(function() {
-    console.log("Ready!");
-
-    renderTable(tableData);
-
-    $("#filter-btn").on("click", function() {
-        
-        filterData();
-    });
-});
-
-function filterData() {
-    // step 0, grab all the user inputs
-    let date_filter = $("#datetime").val();
-    let state = $("#state").val();
-    let country = $("#country").val();
-    let shape = $("#shape").val();
-
-    let filter_data = tableData.filter(row => row.datetime === date_filter);
-    filter_data = filter_data.filter(row => row.state === state);
-    filter_data = filter_data.filter(row => row.country === country);
-    filter_data = filter_data.filter(row => row.shape === shape);
-    renderTable(filter_data);
+// Reference the HTML table using d3
+var tbody = d3.select("tbody");
+function buildTable(data) {
+  // First, clear out any existing data
+  tbody.html("");
+  // Next, loop through each object in the data
+  // and append a row and cells for each value in the row
+  data.forEach((dataRow) => {
+    // Append a row to the table body
+    let row = tbody.append("tr");
+    // Loop through each field in the dataRow and add
+    // each value as a table cell (td)
+    Object.values(dataRow).forEach((val) => {
+      let cell = row.append("td");
+      cell.text(val);
+    }
+    );
+  });
 }
+function filteredTable() {
+  
+    var date, city, state, country, shape, filteredData;
 
-function renderTable(inp_data) {
-    // init html string
-    let html = "";
+    date = d3.select("#datetime").property("value");
+    city = d3.select("#city").property("value");
+    state = d3.select("#state").property("value");
+    country = d3.select("#country").property("value");
+    shape = d3.select("#shape").property("value");
+    filteredData = tableData;
+    
+  if (date){
+    filteredData = filteredData.filter(row => row.datetime === date);
+  }
+  if (city){
+    filteredData = filteredData.filter(row => row.city === city);
+  }
+  if (state){
+    filteredData = filteredData.filter(row => row.state === state);
+  }
+  if (country){
+    filteredData = filteredData.filter(row => row.country === country);
+  }
+  if (shape){
+    filteredData = filteredData.filter(row => row.shape === shape);
+  }
 
-    // loop through all rows
-    inp_data.forEach(function(row) {
-        html += "<tr>";
-
-        // loop through each cell
-        Object.entries(row).forEach(function([key, value]) {
-            html += `<td>${value}</td>`;
-        });
-
-        // close the row
-        html += "</tr>";
-    });
-
-    // shove the html in our elements
-    console.log(html);
-    $("tbody").html("");
-    $("tbody").append(html);
+// Rebuild the table using the filtered data
+// @NOTE: If no date was entered, then filteredData will
+// just be the original tableData.
+buildTable(filteredData);
 }
+d3.selectAll("#filter-btn").on("click", filteredTable);
+
+// Build the table when the page loads
+buildTable(tableData);
